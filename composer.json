@@ -1,0 +1,50 @@
+{
+    "name": "reinvanoyen/copia-sendcloud",
+    "description": "Sendcloud integrations for Laravel Copia",
+    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "copia",
+        "sendcloud",
+        "fulfilment",
+        "efulfilment",
+        "ecommerce"
+    ],
+    "authors": [
+        {
+            "name": "Rein Van Oyen",
+            "email": "reinvanoyen@gmail.com",
+            "homepage": "https://reinvanoyen.be",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.4|^8.0",
+        "guzzlehttp/guzzle": "^7.5"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^7.11"
+    },
+    "autoload": {
+        "psr-4": {
+            "ReinVanOyen\\CopiaSendcloud\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ReinVanOyen\\CopiaSendcloud\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+              "ReinVanOyen\\CopiaSendcloud\\CopiaSendcloudServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "test": [
+            "./vendor/bin/phpunit -c phpunit.xml"
+        ]
+    }
+}
