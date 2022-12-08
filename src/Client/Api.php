@@ -37,6 +37,16 @@ class Api
     }
 
     /**
+     * @param int $id
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function getLabel(int $id)
+    {
+        return $this->client->get('labels/'.$id)['label'];
+    }
+
+    /**
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -66,11 +76,26 @@ class Api
     }
 
     /**
+     * @param array $params
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function getShippingMethods()
+    public function getShippingMethods(array $params = [])
     {
-        return $this->client->get('shipping_methods')['shipping_methods'];
+        return $this->client->get('shipping_methods', $params)['shipping_methods'];
+    }
+
+    /**
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function getShippingPrice(array $params)
+    {
+        return $this->client->get('shipping-price', $params);
+    }
+
+    public function getShippingProducts(array $params)
+    {
+        return $this->client->get('shipping-products', $params);
     }
 }

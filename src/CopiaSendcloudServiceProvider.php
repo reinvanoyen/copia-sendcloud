@@ -17,6 +17,8 @@ class CopiaSendcloudServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->register(EventServiceProvider::class);
+
         $this->app->bind('sendcloud.httpClient', function ($app) {
             return new Client([
                 'base_uri' => config('copia-sendcloud.sendcloud_base_url'),

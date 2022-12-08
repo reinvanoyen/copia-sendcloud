@@ -2,11 +2,13 @@
 
 namespace ReinVanOyen\CopiaSendcloud\Fulfilment;
 
+use Illuminate\Contracts\Events\Dispatcher;
 use ReinVanOyen\Copia\Cart\CartManager;
 use ReinVanOyen\Copia\Contracts\Fulfilment;
 use ReinVanOyen\Copia\Contracts\Orderable;
 use ReinVanOyen\Copia\Fulfilment\FulfilmentStatus;
 use ReinVanOyen\CopiaSendcloud\Client\Api;
+use ReinVanOyen\CopiaSendcloud\Events\ParcelChanged;
 
 class SendcloudShipping implements Fulfilment
 {
@@ -16,23 +18,40 @@ class SendcloudShipping implements Fulfilment
     private $sendcloud;
 
     /**
-     * @param Api $sendcloud
+     * @var Dispatcher $events
      */
-    public function __construct(Api $sendcloud)
+    private Dispatcher $events;
+
+    /**
+     * @param Api $sendcloud
+     * @param Dispatcher $events
+     */
+    public function __construct(Api $sendcloud, Dispatcher $events)
     {
         $this->sendcloud = $sendcloud;
+        $this->events = $events;
     }
 
+    /**
+     * @return string
+     */
     public function getId()
     {
         return 'sendcloud';
     }
 
+    /**
+     * @param CartManager $cart
+     * @return float
+     */
     public function getCost(CartManager $cart): float
     {
         return 20;
     }
 
+    /**
+     * @return string
+     */
     public function getTitle(): string
     {
         return 'Sendcloud';
@@ -60,7 +79,7 @@ class SendcloudShipping implements Fulfilment
         }
 
         // Create a new parcel
-        $response = $this->sendcloud->createParcel([
+        $parcel = $this->sendcloud->createParcel([
             'parcel' => [
                 'order_number' => $order->getOrderId(),
                 'name' => $customer->getFullName(), // required
@@ -72,14 +91,18 @@ class SendcloudShipping implements Fulfilment
                 "telephone" => $customer->getTelephoneNumber(),
                 'email' => $customer->getEmail(),
                 "weight" => $order->getWeight(),
-                'request_label' => false,
                 "insured_value" => 0,
                 "total_order_value_currency" => 'EUR',
                 "total_order_value" => $order->getTotal(),
                 "quantity" => 1,
                 'parcel_items' => $parcels,
+                'request_label' => config('copia-sendcloud.auto_request_label'),
             ]]);
 
+        // Dispatch an event with the parcel data
+        ParcelChanged::dispatch($parcel);
+
+        // Set the fulfilment status of the order
         $order->setFulfilmentStatus(FulfilmentStatus::UNFULFILLED);
     }
 }
