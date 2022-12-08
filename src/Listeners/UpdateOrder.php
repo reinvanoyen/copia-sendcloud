@@ -2,10 +2,11 @@
 
 namespace ReinVanOyen\CopiaSendcloud\Listeners;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use ReinVanOyen\Copia\Models\Order;
 use ReinVanOyen\CopiaSendcloud\Events\ParcelChanged;
 
-class UpdateOrder
+class UpdateOrder implements ShouldQueue
 {
     /**
      * @param ParcelChanged $event
